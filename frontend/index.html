@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DentistEnvy - SEO Comparison Tool</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            padding: 40px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .logo {
+            font-size: 32px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: #6b7280;
+            font-size: 16px;
+        }
+
+        /* Form Styles */
+        .form-section {
+            margin-bottom: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 8px;
+        }
+
+        .input {
+            width: 100%;
+            padding: 14px 16px;
+            font-size: 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        }
+
+        .input::placeholder {
+            color: #9ca3af;
+        }
+
+        /* Mode Selection */
+        .mode-selector {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 8px;
+        }
+
+        .mode-option {
+            padding: 20px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .mode-option:hover {
+            border-color: #667eea;
+            background: #f9fafb;
+        }
+
+        .mode-option.selected {
+            border-color: #667eea;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+        }
+
+        .mode-option input {
+            display: none;
+        }
+
+        .mode-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 4px;
+        }
+
+        .mode-desc {
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        /* Competitor List */
+        .competitor-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .competitor-item {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .competitor-item .input {
+            flex: 1;
+        }
+
+        .remove-btn {
+            padding: 12px 16px;
+            background: #fee2e2;
+            color: #dc2626;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .add-btn {
+            padding: 14px;
+            background: #f9fafb;
+            color: #374151;
+            border: 2px dashed #d1d5db;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .add-btn:hover {
+            background: #f3f4f6;
+            border-color: #9ca3af;
+        }
+
+        /* Buttons */
+        .btn {
+            width: 100%;
+            padding: 16px 24px;
+            font-size: 18px;
+            font-weight: 600;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #374151;
+            margin-top: 16px;
+        }
+
+        /* Progress */
+        .progress-section {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid #e5e7eb;
+            border-top-color: #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 24px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .progress-text {
+            font-size: 18px;
+            color: #374151;
+            margin-bottom: 16px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            max-width: 400px;
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 0 auto;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transition: width 0.3s ease;
+        }
+
+        /* Report Styles */
+        .report-section {
+            display: none;
+        }
+
+        .score-cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .score-card {
+            padding: 24px;
+            background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .score-value {
+            font-size: 42px;
+            font-weight: 700;
+        }
+
+        .score-value.good { color: #10b981; }
+        .score-value.medium { color: #f59e0b; }
+        .score-value.poor { color: #ef4444; }
+
+        .score-label {
+            font-size: 12px;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-top: 8px;
+        }
+
+        .section {
+            background: #f9fafb;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 20px;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+
+        /* Table */
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th,
+        .table td {
+            padding: 14px;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .table th {
+            font-size: 12px;
+            font-weight: 600;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .table td {
+            font-size: 14px;
+            color: #374151;
+        }
+
+        .rank {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .rank.top3 { background: #d1fae5; color: #065f46; }
+        .rank.top10 { background: #fef3c7; color: #92400e; }
+        .rank.top20 { background: #fee2e2; color: #991b1b; }
+        .rank.unranked { background: #f3f4f6; color: #6b7280; }
+
+        /* Recommendations */
+        .recommendations {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .recommendation {
+            padding: 20px;
+            background: #fff;
+            border-radius: 10px;
+            border-left: 4px solid;
+        }
+
+        .recommendation.critical { border-left-color: #ef4444; }
+        .recommendation.high { border-left-color: #f59e0b; }
+        .recommendation.medium { border-left-color: #3b82f6; }
+        .recommendation.low { border-left-color: #10b981; }
+
+        .recommendation-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .recommendation-priority {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .recommendation.critical .recommendation-priority { background: #fee2e2; color: #991b1b; }
+        .recommendation.high .recommendation-priority { background: #fef3c7; color: #92400e; }
+        .recommendation.medium .recommendation-priority { background: #dbeafe; color: #1e40af; }
+        .recommendation.low .recommendation-priority { background: #d1fae5; color: #065f46; }
+
+        .recommendation-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .recommendation-desc {
+            font-size: 14px;
+            color: #6b7280;
+            line-height: 1.6;
+        }
+
+        /* Hidden */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 24px;
+            }
+
+            .mode-selector {
+                grid-template-columns: 1fr;
+            }
+
+            .score-cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .table {
+                font-size: 12px;
+            }
+
+            .table th,
+            .table td {
+                padding: 10px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="logo">DentistEnvy</h1>
+            <p class="subtitle">Compare your dental practice's SEO against local competitors</p>
+        </div>
+
+        <!-- Form Section -->
+        <div id="form-section" class="form-section">
+            <form id="seo-form">
+                <div class="form-group">
+                    <label class="label">Practice Name</label>
+                    <input type="text" class="input" id="practice-name" placeholder="Smile Dental Care" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="label">Practice Address</label>
+                    <input type="text" class="input" id="practice-address" placeholder="123 Main St, Austin, TX 78701" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="label">Your Website URL</label>
+                    <div style="display: flex; align-items: center; gap: 0;">
+                        <span style="padding: 14px 12px; background: #f3f4f6; border: 2px solid #e5e7eb; border-right: none; border-radius: 10px 0 0 10px; color: #6b7280; font-size: 16px;">https://www.</span>
+                        <input type="text" class="input" id="practice-website" placeholder="yourdentalpractice.com" required style="border-radius: 0 10px 10px 0;">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="label">Type of Practice</label>
+                    <select class="input" id="practice-type" required>
+                        <option value="general">General Dentistry</option>
+                        <option value="pediatric">Pediatric Dentistry</option>
+                        <option value="oral_surgery">Oral Surgery</option>
+                        <option value="periodontist">Periodontist</option>
+                        <option value="orthodontist">Orthodontist</option>
+                        <option value="prosthodontist">Prosthodontist</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="label">How would you like to select competitors?</label>
+                    <div class="mode-selector">
+                        <label class="mode-option selected" data-mode="auto">
+                            <input type="radio" name="mode" value="auto" checked>
+                            <div class="mode-title">Auto-Discover</div>
+                            <div class="mode-desc">Find the top 5 dental offices within 7 miles</div>
+                        </label>
+                        <label class="mode-option" data-mode="manual">
+                            <input type="radio" name="mode" value="manual">
+                            <div class="mode-title">Manual Entry</div>
+                            <div class="mode-desc">I'll enter competitor websites myself</div>
+                        </label>
+                    </div>
+                </div>
+
+                <div id="manual-entry" class="form-group hidden">
+                    <label class="label">Competitor Websites (up to 10)</label>
+                    <div class="competitor-list" id="competitor-list">
+                        <div class="competitor-item">
+                            <span style="padding: 14px 12px; background: #f3f4f6; border: 2px solid #e5e7eb; border-right: none; border-radius: 10px 0 0 10px; color: #6b7280; font-size: 16px;">https://</span>
+                            <input type="text" class="input competitor-url" placeholder="competitor1.com" style="border-radius: 0 10px 10px 0;">
+                        </div>
+                    </div>
+                    <button type="button" class="add-btn" id="add-competitor">+ Add Another Competitor</button>
+                </div>
+
+                <button type="submit" class="btn btn-primary" id="submit-btn">
+                    Analyze My SEO
+                </button>
+            </form>
+        </div>
+
+        <!-- Progress Section -->
+        <div id="progress-section" class="progress-section hidden">
+            <div class="spinner"></div>
+            <div class="progress-text" id="progress-text">Starting analysis...</div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+            </div>
+            <p style="margin-top: 24px; color: #6b7280; font-size: 14px;">This process could take up to 7 minutes.<br>We're analyzing your website and comparing it against your competitors.</p>
+        </div>
+
+        <!-- Report Section -->
+        <div id="report-section" class="report-section">
+            <div class="header">
+                <h1 class="logo">SEO Analysis Report</h1>
+                <p class="subtitle" id="report-practice-name"></p>
+            </div>
+
+            <div class="score-cards" id="score-cards">
+                <!-- Scores will be inserted here -->
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">Domain Authority Comparison</h2>
+                <div class="chart-container">
+                    <canvas id="backlinks-chart"></canvas>
+                </div>
+                <table class="table" style="margin-top: 20px;">
+                    <thead>
+                        <tr>
+                            <th>Practice</th>
+                            <th>Domain Rank</th>
+                            <th>Backlinks</th>
+                            <th>Referring Domains</th>
+                        </tr>
+                    </thead>
+                    <tbody id="competitors-table">
+                        <!-- Competitors will be inserted here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">Google Reviews Comparison</h2>
+                <p style="color: #6b7280; font-size: 14px; margin-bottom: 20px;">Reviews are a key local SEO ranking factor - see how you compare</p>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Practice</th>
+                            <th>Rating</th>
+                            <th>Review Count</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reviews-table">
+                        <!-- Reviews will be inserted here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">Keyword Rankings</h2>
+                <p style="color: #6b7280; font-size: 14px; margin-bottom: 20px;">How you rank for the 20 most popular dental search terms</p>
+                <div id="keyword-summary" style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+                    <!-- Keyword lists will be inserted here -->
+                </div>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">Directory Listings</h2>
+                <p style="color: #6b7280; font-size: 14px; margin-bottom: 20px;">Your presence on key dental and business directories</p>
+                <div id="directory-listings" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
+                    <!-- Directory listings will be inserted here -->
+                </div>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">Recommendations</h2>
+                <div class="recommendations" id="recommendations">
+                    <!-- Recommendations will be inserted here -->
+                </div>
+            </div>
+
+            <button class="btn btn-secondary" id="start-over">Start New Analysis</button>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const API_URL = window.location.origin;
+
+        // State
+        let competitorMode = 'auto';
+        let competitorCount = 1;
+        let backlinksChart = null;
+
+        // DOM Elements
+        const formSection = document.getElementById('form-section');
+        const progressSection = document.getElementById('progress-section');
+        const reportSection = document.getElementById('report-section');
+        const manualEntry = document.getElementById('manual-entry');
+        const competitorList = document.getElementById('competitor-list');
+        const progressText = document.getElementById('progress-text');
+        const progressFill = document.getElementById('progress-fill');
+
+        // Mode Selection
+        document.querySelectorAll('.mode-option').forEach(option => {
+            option.addEventListener('click', () => {
+                document.querySelectorAll('.mode-option').forEach(o => o.classList.remove('selected'));
+                option.classList.add('selected');
+                option.querySelector('input').checked = true;
+                competitorMode = option.dataset.mode;
+
+                if (competitorMode === 'manual') {
+                    manualEntry.classList.remove('hidden');
+                } else {
+                    manualEntry.classList.add('hidden');
+                }
+            });
+        });
+
+        // Add Competitor
+        document.getElementById('add-competitor').addEventListener('click', () => {
+            if (competitorCount < 10) {
+                competitorCount++;
+                const item = document.createElement('div');
+                item.className = 'competitor-item';
+                item.innerHTML = `
+                    <span style="padding: 14px 12px; background: #f3f4f6; border: 2px solid #e5e7eb; border-right: none; border-radius: 10px 0 0 10px; color: #6b7280; font-size: 16px;">https://</span>
+                    <input type="text" class="input competitor-url" placeholder="competitor${competitorCount}.com" style="border-radius: 0 10px 10px 0;">
+                    <button type="button" class="remove-btn" onclick="removeCompetitor(this)">Remove</button>
+                `;
+                competitorList.appendChild(item);
+            }
+        });
+
+        function removeCompetitor(btn) {
+            btn.parentElement.remove();
+            competitorCount--;
+        }
+
+        // Form Submission
+        document.getElementById('seo-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const practiceName = document.getElementById('practice-name').value;
+            const address = document.getElementById('practice-address').value;
+            const websiteInput = document.getElementById('practice-website').value.trim();
+            const websiteUrl = 'https://www.' + websiteInput.replace(/^(https?:\/\/)?(www\.)?/, '');
+            const practiceType = document.getElementById('practice-type').value;
+
+            let manualCompetitors = [];
+            if (competitorMode === 'manual') {
+                const inputs = document.querySelectorAll('.competitor-url');
+                manualCompetitors = Array.from(inputs)
+                    .map(input => {
+                        let url = input.value.trim();
+                        if (url && !url.startsWith('http')) {
+                            url = 'https://' + url;
+                        }
+                        return url;
+                    })
+                    .filter(url => url.length > 0);
+
+                if (manualCompetitors.length === 0) {
+                    alert('Please enter at least one competitor URL');
+                    return;
+                }
+            }
+
+            // Show progress
+            formSection.classList.add('hidden');
+            progressSection.classList.remove('hidden');
+            reportSection.style.display = 'none';
+
+            try {
+                // Start analysis
+                const startResponse = await fetch(`${API_URL}/api/analysis/start`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        practiceName,
+                        address,
+                        websiteUrl,
+                        practiceType,
+                        competitorMode,
+                        manualCompetitors
+                    })
+                });
+
+                const { jobId } = await startResponse.json();
+
+                // Poll for completion
+                await pollForCompletion(jobId);
+
+            } catch (error) {
+                console.error('Analysis error:', error);
+                alert('Analysis failed: ' + (error.message || 'Unknown error'));
+                formSection.classList.remove('hidden');
+                progressSection.classList.add('hidden');
+            }
+        });
+
+        async function pollForCompletion(jobId) {
+            const pollInterval = 2000;
+            const maxAttempts = 120;
+
+            for (let attempt = 0; attempt < maxAttempts; attempt++) {
+                try {
+                    const statusResponse = await fetch(`${API_URL}/api/analysis/${jobId}/status`);
+                    const status = await statusResponse.json();
+
+                    progressText.textContent = status.progressMessage || 'Processing...';
+                    progressFill.style.width = `${status.progress || 0}%`;
+
+                    if (status.status === 'completed') {
+                        const reportResponse = await fetch(`${API_URL}/api/analysis/${jobId}/report`);
+                        const report = await reportResponse.json();
+                        displayReport(report);
+                        return;
+                    }
+
+                    if (status.status === 'failed') {
+                        throw new Error('Analysis failed');
+                    }
+
+                    await new Promise(resolve => setTimeout(resolve, pollInterval));
+                } catch (error) {
+                    throw error;
+                }
+            }
+
+            throw new Error('Analysis timed out');
+        }
+
+        function displayReport(report) {
+            progressSection.classList.add('hidden');
+            reportSection.style.display = 'block';
+
+            // Practice name
+            document.getElementById('report-practice-name').textContent = report.practiceName;
+
+            // Score cards
+            const scoreCards = document.getElementById('score-cards');
+            const scores = report.scores;
+            scoreCards.innerHTML = `
+                <div class="score-card">
+                    <div class="score-value ${getScoreClass(scores.overall)}">${scores.overall}</div>
+                    <div class="score-label">Overall Score</div>
+                </div>
+                <div class="score-card">
+                    <div class="score-value ${getScoreClass(scores.keywords)}">${scores.keywords}</div>
+                    <div class="score-label">Keywords</div>
+                </div>
+                <div class="score-card">
+                    <div class="score-value ${getScoreClass(scores.backlinks)}">${scores.backlinks}</div>
+                    <div class="score-label">Backlinks</div>
+                </div>
+                <div class="score-card">
+                    <div class="score-value ${getScoreClass(scores.technical)}">${scores.technical}</div>
+                    <div class="score-label">Technical</div>
+                </div>
+            `;
+
+            // Backlinks chart
+            renderBacklinksChart(report);
+
+            // Competitors table with clickable links
+            const competitorsTable = document.getElementById('competitors-table');
+            competitorsTable.innerHTML = `
+                <tr style="background: #eff6ff;">
+                    <td><strong>${report.practiceData.name}</strong> (You)</td>
+                    <td><strong>${report.practiceData.backlinks.rank}</strong></td>
+                    <td>${report.practiceData.backlinks.backlinks.toLocaleString()}</td>
+                    <td>${report.practiceData.backlinks.referring_domains.toLocaleString()}</td>
+                </tr>
+                ${report.competitors.map(c => `
+                    <tr>
+                        <td><a href="${c.website}" target="_blank" rel="noopener" style="color: #667eea; text-decoration: none; font-weight: 500;">${c.name}</a></td>
+                        <td>${c.backlinks.rank}</td>
+                        <td>${c.backlinks.backlinks.toLocaleString()}</td>
+                        <td>${c.backlinks.referring_domains.toLocaleString()}</td>
+                    </tr>
+                `).join('')}
+            `;
+
+            // Reviews comparison table
+            const reviewsTable = document.getElementById('reviews-table');
+            const renderStars = (rating) => {
+                if (!rating) return '<span style="color: #9ca3af;">No rating</span>';
+                const fullStars = Math.floor(rating);
+                const hasHalf = rating % 1 >= 0.5;
+                let stars = '★'.repeat(fullStars);
+                if (hasHalf) stars += '½';
+                return `<span style="color: #f59e0b; font-size: 16px;">${stars}</span> <span style="color: #374151; font-weight: 600;">${rating.toFixed(1)}</span>`;
+            };
+
+            const practiceReviewCount = report.practiceData.review_count || 0;
+            const avgCompetitorReviews = report.competitors.length > 0
+                ? Math.round(report.competitors.reduce((sum, c) => sum + (c.review_count || 0), 0) / report.competitors.length)
+                : 0;
+            const reviewCountClass = practiceReviewCount >= avgCompetitorReviews ? 'color: #10b981;' : 'color: #ef4444;';
+
+            reviewsTable.innerHTML = `
+                <tr style="background: #eff6ff;">
+                    <td><strong>${report.practiceData.name}</strong> (You)</td>
+                    <td>${renderStars(report.practiceData.rating)}</td>
+                    <td><strong style="${reviewCountClass}">${practiceReviewCount.toLocaleString()}</strong></td>
+                </tr>
+                ${report.competitors.map(c => `
+                    <tr>
+                        <td><a href="${c.website}" target="_blank" rel="noopener" style="color: #667eea; text-decoration: none; font-weight: 500;">${c.name}</a></td>
+                        <td>${renderStars(c.rating)}</td>
+                        <td>${(c.review_count || 0).toLocaleString()}</td>
+                    </tr>
+                `).join('')}
+            `;
+
+            // Keyword summary - two lists
+            const keywordSummary = document.getElementById('keyword-summary');
+            const ks = report.keywordSummary || {};
+
+            const renderRankingList = (items, emptyMessage) => {
+                if (!items || items.length === 0) {
+                    return `<div style="color: #6b7280; font-style: italic; padding: 12px 0;">${emptyMessage}</div>`;
+                }
+                return items.map((kw, i) => `
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #e5e7eb;">
+                        <span style="color: #374151;">${kw.keyword}</span>
+                        <span style="font-weight: 600; color: ${kw.practiceRank ? (kw.practiceRank <= 10 ? '#10b981' : '#f59e0b') : '#ef4444'};">
+                            ${kw.practiceRank ? '#' + kw.practiceRank : 'Not ranked'}
+                        </span>
+                    </div>
+                `).join('');
+            };
+
+            keywordSummary.innerHTML = `
+                <div style="background: #fff; border-radius: 12px; padding: 24px; border: 2px solid #10b981;">
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px;">
+                        <span style="font-size: 20px;">✓</span>
+                        <h3 style="font-size: 16px; font-weight: 600; color: #065f46; margin: 0;">Keywords You Rank For</h3>
+                    </div>
+                    ${renderRankingList(ks.top5Ranking, 'No rankings found yet')}
+                </div>
+                <div style="background: #fff; border-radius: 12px; padding: 24px; border: 2px solid #f59e0b;">
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px;">
+                        <span style="font-size: 20px;">↑</span>
+                        <h3 style="font-size: 16px; font-weight: 600; color: #92400e; margin: 0;">Keywords to Improve</h3>
+                    </div>
+                    ${renderRankingList(ks.top5Improve, 'Great job! No improvements needed')}
+                </div>
+            `;
+
+            // Directory listings
+            const directoryListings = document.getElementById('directory-listings');
+            const dirs = report.directoryListings || [];
+
+            const getImportanceBadge = (importance) => {
+                const colors = {
+                    critical: { bg: '#fee2e2', text: '#991b1b' },
+                    high: { bg: '#fef3c7', text: '#92400e' },
+                    medium: { bg: '#dbeafe', text: '#1e40af' },
+                    low: { bg: '#f3f4f6', text: '#6b7280' }
+                };
+                const c = colors[importance] || colors.low;
+                return `<span style="font-size: 10px; padding: 2px 6px; border-radius: 4px; background: ${c.bg}; color: ${c.text}; text-transform: uppercase; font-weight: 600;">${importance}</span>`;
+            };
+
+            directoryListings.innerHTML = dirs.map(dir => `
+                <div style="background: #fff; border-radius: 8px; padding: 16px; border: 2px solid ${dir.found ? '#10b981' : '#e5e7eb'}; display: flex; align-items: center; justify-content: space-between;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <span style="font-size: 20px;">${dir.found ? '✓' : '✗'}</span>
+                        <div>
+                            <div style="font-weight: 600; color: #1f2937;">${dir.directory}</div>
+                            <div style="font-size: 12px; color: #6b7280;">${dir.domain}</div>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        ${getImportanceBadge(dir.importance)}
+                        ${dir.found
+                            ? `<a href="${dir.url}" target="_blank" rel="noopener" style="font-size: 12px; color: #667eea; text-decoration: none;">View →</a>`
+                            : `<span style="font-size: 12px; color: #ef4444; font-weight: 500;">Not Found</span>`
+                        }
+                    </div>
+                </div>
+            `).join('');
+
+            // Recommendations
+            const recommendations = document.getElementById('recommendations');
+            recommendations.innerHTML = report.recommendations.map(rec => `
+                <div class="recommendation ${rec.priority}">
+                    <div class="recommendation-header">
+                        <span class="recommendation-priority">${rec.priority}</span>
+                        <span class="recommendation-title">${rec.title}</span>
+                    </div>
+                    <p class="recommendation-desc">${rec.description}</p>
+                </div>
+            `).join('');
+        }
+
+        function getScoreClass(score) {
+            if (score >= 70) return 'good';
+            if (score >= 40) return 'medium';
+            return 'poor';
+        }
+
+        function renderRank(rank) {
+            if (rank === null || rank === undefined) {
+                return '<span class="rank unranked">Not Ranked</span>';
+            }
+            if (rank <= 3) {
+                return `<span class="rank top3">#${rank}</span>`;
+            }
+            if (rank <= 10) {
+                return `<span class="rank top10">#${rank}</span>`;
+            }
+            return `<span class="rank top20">#${rank}</span>`;
+        }
+
+        function renderBacklinksChart(report) {
+            const canvas = document.getElementById('backlinks-chart');
+            const ctx = canvas.getContext('2d');
+
+            // Destroy previous chart if exists
+            if (backlinksChart) {
+                backlinksChart.destroy();
+            }
+
+            const labels = [
+                report.practiceData.name,
+                ...report.competitors.map(c => c.name.substring(0, 20))
+            ];
+
+            const data = [
+                report.practiceData.backlinks.rank,
+                ...report.competitors.map(c => c.backlinks.rank)
+            ];
+
+            const colors = [
+                '#667eea',
+                ...report.competitors.map(() => '#94a3b8')
+            ];
+
+            backlinksChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels,
+                    datasets: [{
+                        label: 'Domain Rank',
+                        data,
+                        backgroundColor: colors,
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Domain Rank'
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                maxRotation: 45,
+                                minRotation: 45
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Start Over
+        document.getElementById('start-over').addEventListener('click', () => {
+            reportSection.style.display = 'none';
+            formSection.classList.remove('hidden');
+            document.getElementById('seo-form').reset();
+            document.querySelectorAll('.mode-option').forEach(o => o.classList.remove('selected'));
+            document.querySelector('.mode-option[data-mode="auto"]').classList.add('selected');
+            competitorMode = 'auto';
+            manualEntry.classList.add('hidden');
+        });
+    </script>
+</body>
+</html>

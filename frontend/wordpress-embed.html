@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WordPress Embed Instructions - DentistEnvy</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f3f4f6;
+            padding: 40px 20px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #1a1a2e;
+            margin-bottom: 8px;
+        }
+        h2 {
+            color: #374151;
+            margin-top: 32px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        .subtitle {
+            color: #6b7280;
+            margin-bottom: 32px;
+        }
+        .code-block {
+            background: #1f2937;
+            color: #f9fafb;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 14px;
+            margin: 16px 0;
+        }
+        .code-block code {
+            color: #f9fafb;
+        }
+        .highlight {
+            color: #fbbf24;
+        }
+        .step {
+            background: #f9fafb;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 16px 0;
+            border-left: 4px solid #667eea;
+        }
+        .step-number {
+            display: inline-block;
+            width: 28px;
+            height: 28px;
+            background: #667eea;
+            color: #fff;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 28px;
+            font-weight: 600;
+            margin-right: 12px;
+        }
+        .note {
+            background: #fef3c7;
+            padding: 16px;
+            border-radius: 8px;
+            border-left: 4px solid #f59e0b;
+            margin: 16px 0;
+        }
+        .success {
+            background: #d1fae5;
+            padding: 16px;
+            border-radius: 8px;
+            border-left: 4px solid #10b981;
+            margin: 16px 0;
+        }
+        a {
+            color: #667eea;
+        }
+        ul {
+            margin: 16px 0;
+            padding-left: 24px;
+        }
+        li {
+            margin: 8px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>DentistEnvy WordPress Integration</h1>
+        <p class="subtitle">Embed the SEO comparison tool on newpatientsinc.com</p>
+
+        <h2>Quick Start</h2>
+
+        <p>Add this code to any WordPress page or post where you want the widget to appear:</p>
+
+        <div class="code-block">
+<code>&lt;!-- DentistEnvy SEO Comparison Tool --&gt;
+&lt;div data-dentistenvy&gt;&lt;/div&gt;
+&lt;script&gt;
+    window.DENTISTENVY_API_URL = '<span class="highlight">https://your-api-domain.com</span>';
+&lt;/script&gt;
+&lt;script src="<span class="highlight">https://your-api-domain.com</span>/embed.js"&gt;&lt;/script&gt;</code>
+        </div>
+
+        <div class="note">
+            <strong>Note:</strong> Replace <code>https://your-api-domain.com</code> with your actual API server URL. For local testing, use <code>http://localhost:5001</code>.
+        </div>
+
+        <h2>WordPress Installation Steps</h2>
+
+        <div class="step">
+            <span class="step-number">1</span>
+            <strong>Create a New Page</strong>
+            <p>In WordPress admin, go to Pages → Add New</p>
+        </div>
+
+        <div class="step">
+            <span class="step-number">2</span>
+            <strong>Switch to HTML/Code Editor</strong>
+            <p>Click the three dots menu (⋮) in the top right and select "Code editor" or use a Custom HTML block</p>
+        </div>
+
+        <div class="step">
+            <span class="step-number">3</span>
+            <strong>Paste the Embed Code</strong>
+            <p>Copy and paste the embed code above into the editor</p>
+        </div>
+
+        <div class="step">
+            <span class="step-number">4</span>
+            <strong>Publish the Page</strong>
+            <p>Click Publish to make the page live</p>
+        </div>
+
+        <h2>Using with Elementor</h2>
+
+        <p>If you're using Elementor page builder:</p>
+        <ul>
+            <li>Drag an "HTML" widget onto your page</li>
+            <li>Paste the embed code into the HTML widget</li>
+            <li>Save and preview</li>
+        </ul>
+
+        <h2>Using with WPBakery</h2>
+
+        <p>If you're using WPBakery (Visual Composer):</p>
+        <ul>
+            <li>Add a "Raw HTML" element</li>
+            <li>Paste the embed code</li>
+            <li>Save changes</li>
+        </ul>
+
+        <h2>Shortcode Option</h2>
+
+        <p>To create a reusable shortcode, add this to your theme's <code>functions.php</code>:</p>
+
+        <div class="code-block">
+<code>function dentistenvy_shortcode() {
+    return '
+    &lt;div data-dentistenvy&gt;&lt;/div&gt;
+    &lt;script&gt;
+        window.DENTISTENVY_API_URL = "https://your-api-domain.com";
+    &lt;/script&gt;
+    &lt;script src="https://your-api-domain.com/embed.js"&gt;&lt;/script&gt;
+    ';
+}
+add_shortcode('dentistenvy', 'dentistenvy_shortcode');</code>
+        </div>
+
+        <p>Then use <code>[dentistenvy]</code> anywhere in your content.</p>
+
+        <h2>For Local Testing</h2>
+
+        <p>To test locally before deploying:</p>
+
+        <div class="code-block">
+<code>&lt;!-- Local Testing --&gt;
+&lt;div data-dentistenvy&gt;&lt;/div&gt;
+&lt;script&gt;
+    window.DENTISTENVY_API_URL = 'http://localhost:5001';
+&lt;/script&gt;
+&lt;script src="http://localhost:5001/embed.js"&gt;&lt;/script&gt;</code>
+        </div>
+
+        <div class="success">
+            <strong>Test Page:</strong> Visit <a href="http://localhost:5001">http://localhost:5001</a> to see the standalone version, or <a href="http://localhost:5001/wordpress-embed.html">view these instructions</a>.
+        </div>
+
+        <h2>Production Deployment</h2>
+
+        <p>When deploying to production, you'll need to:</p>
+        <ul>
+            <li>Host the Flask API on a server (Railway, Render, AWS, etc.)</li>
+            <li>Set up HTTPS for secure connections</li>
+            <li>Update the API URL in the embed code</li>
+            <li>Configure CORS to allow requests from newpatientsinc.com</li>
+        </ul>
+
+        <h2>Troubleshooting</h2>
+
+        <ul>
+            <li><strong>Widget not appearing?</strong> Check browser console for JavaScript errors</li>
+            <li><strong>CORS errors?</strong> Make sure the API server allows requests from your WordPress domain</li>
+            <li><strong>Styles look wrong?</strong> The widget uses scoped styles with "de-" prefix to avoid conflicts</li>
+        </ul>
+    </div>
+</body>
+</html>
