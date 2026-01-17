@@ -1,0 +1,30 @@
+services:
+  # Backend API
+  - type: web
+    name: dentistenvy-api
+    runtime: node
+    rootDir: backend
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: PORT
+        value: 3001
+      - key: DATAFORSEO_LOGIN
+        sync: false
+      - key: DATAFORSEO_PASSWORD
+        sync: false
+      - key: GOOGLE_PLACES_API_KEY
+        sync: false
+      - key: FRONTEND_URL
+        sync: false
+
+  # Frontend Widget
+  - type: static
+    name: dentistenvy-widget
+    rootDir: widget
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    headers:
+      - path: /*
+        name: Access-Control-Allow-Origin
+        value: "*"
